@@ -197,11 +197,20 @@ function draw() {
   pendulum.bottom.length = l2;
 
 
-  fill(50);
   textSize(14);
   textAlign(LEFT);
+
+  stroke(220, 80, 80);
+  strokeWeight(1);
+  fill(220, 80, 80);
   text('m1: ' + m1.toFixed(1) + ' kg', 185, 30);
+
+  stroke(80, 140, 220);
+  fill(80, 140, 220);
   text('m2: ' + m2.toFixed(1) + ' kg', 185, 60);
+
+  stroke(50);
+  fill(50);
   text('L1: ' + l1.toFixed(0), 185, 90);
   text('L2: ' + l2.toFixed(0), 185, 120);
 
