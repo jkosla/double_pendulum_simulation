@@ -1,10 +1,12 @@
-let sliders = [];
+let slider1, slider2, slider3, slider4;
 const dt = 0.001; // krok całkowania
 const STEPS_PER_FRAME = 100; // liczba kroków całkowania na klatkę
 
 let g = 9.81
 let m1 = 10;
 let m2 = 50;
+let l1 = 200;
+let l2 = 200;
 
 let theta1 = 0;
 let theta2 = 0;
@@ -153,8 +155,8 @@ constructor(x1, y1, theta, omega, mass, length) {
 } 
   
 
-let pendulum1 = new Pendulum(250, 50, 5*Math.PI/4, 0, m1, 200)
-let pendulum2 = new Pendulum(pendulum1.x2, pendulum1.y2, -Math.PI/4, 0, m2, 200)
+let pendulum1 = new Pendulum(400, 100, 5*Math.PI/4, 0, m1, l1)
+let pendulum2 = new Pendulum(pendulum1.x2, pendulum1.y2, -Math.PI/4, 0, m2, l2)
 
 let pendulum = new DoublePendulum(
     pendulum1,
@@ -162,60 +164,88 @@ let pendulum = new DoublePendulum(
 )
 
 function setup() {
-  createCanvas(500, 500);
-  console.log(JSON.stringify(pendulum, null, 2))
-  console.log(pendulum)
+  createCanvas(800, 700);
 
-  let slider1 = createSlider(0.2, 20.2, 0);
-  slider1.position(10, 10); 
-  slider1.size(80);
+  slider1 = createSlider(1, 100, m1, 0.1);
+  slider1.position(20, 20);
+  slider1.size(150);
 
-  let slider2 = createSlider(0.2, 20.2, 0);
-  slider2.position(10, 30);
-  slider2.size(80);  
-  
-  let slider3 = createSlider(0.1, 10.1, 0);
-  slider3.position(10, 50);
-  slider3.size(80);
+  slider2 = createSlider(1, 100, m2, 0.1);
+  slider2.position(20, 50);
+  slider2.size(150);
 
-  let slider4 = createSlider(0.1, 10.1, 0);
-  slider4.position(10, 70)
-  slider4.size(80);
+  slider3 = createSlider(50, 300, l1, 1);
+  slider3.position(20, 80);
+  slider3.size(150);
 
-
-
-  
+  slider4 = createSlider(50, 300, l2, 1);
+  slider4.position(20, 110)
+  slider4.size(150);
 }
-
-
-function forces()
-{
-  
-}
-
-
-// function mouseDragged(){
-//   particles[N-1].x = mouseY - height / 2;
-// }
-
 
 function draw() {
-  background(255, 255, 255);
-  fill(255, 0, 0);
-  circle(pendulum.top.x2, pendulum.top.y2, 20);
-  circle(pendulum.bottom.x2, pendulum.bottom.y2, 20);
+  background(245, 245, 250);
+
+  m1 = slider1.value();
+  m2 = slider2.value();
+  l1 = slider3.value();
+  l2 = slider4.value();
+
+  pendulum.top.m = m1;
+  pendulum.bottom.m = m2;
+  pendulum.top.length = l1;
+  pendulum.bottom.length = l2;
+
+
+  textSize(14);
+  textAlign(LEFT);
+
+  stroke(220, 80, 80);
+  strokeWeight(1);
+  fill(220, 80, 80);
+  text('m1: ' + m1.toFixed(1) + ' kg', 185, 30);
+
+  stroke(80, 140, 220);
+  fill(80, 140, 220);
+  text('m2: ' + m2.toFixed(1) + ' kg', 185, 60);
+
+  stroke(50);
+  fill(50);
+  text('L1: ' + l1.toFixed(0), 185, 90);
+  text('L2: ' + l2.toFixed(0), 185, 120);
+
+  fill(80);
+  noStroke();
+  circle(pendulum.top.x1, pendulum.top.y1, 12);
+
+  stroke(60);
+  strokeWeight(3);
   line(pendulum.top.x1, pendulum.top.y1, pendulum.top.x2, pendulum.top.y2);
   line(pendulum.bottom.x1, pendulum.bottom.y1, pendulum.bottom.x2, pendulum.bottom.y2);
 
+  strokeWeight(2);
+  stroke(180, 50, 50);
+  fill(220, 80, 80);
+  circle(pendulum.top.x2, pendulum.top.y2, 30);
+
+  stroke(50, 100, 200);
+  fill(80, 140, 220);
+  circle(pendulum.bottom.x2, pendulum.bottom.y2, 30);
 
   for (let step=0; step<STEPS_PER_FRAME; ++step){
-
     pendulum.update();
 
-    
-    
-
+    if (!isFinite(pendulum.top.theta) || !isFinite(pendulum.bottom.theta) ||
+        !isFinite(pendulum.top.omega) || !isFinite(pendulum.bottom.omega) ||
+        Math.abs(pendulum.top.omega) > 1000 || Math.abs(pendulum.bottom.omega) > 1000) {
+          
+      noStroke();
+      fill(220, 50, 50);
+      textSize(20);
+      textAlign(CENTER);
+      text('SIMULATION UNSTABLE!', width/2, height/2);
+      textAlign(LEFT);
+      break;
+    }
   }
- 
-
 }
