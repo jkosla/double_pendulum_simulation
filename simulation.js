@@ -1,7 +1,8 @@
 let slider1, slider2, slider3, slider4;
 const dt = 0.001; // krok całkowania
 const STEPS_PER_FRAME = 100; // liczba kroków całkowania na klatkę
-
+let isRunning = false
+let button;
 let g = 9.81
 let m1 = 10;
 let m2 = 50;
@@ -163,8 +164,15 @@ let pendulum = new DoublePendulum(
     pendulum2
 )
 
+function changeRunning() {
+  isRunning = !isRunning;
+}
+
 function setup() {
   createCanvas(800, 700);
+  button = createButton('Pause/Resume');
+  button.position(20, 140);
+  button.mousePressed(changeRunning);
 
   slider1 = createSlider(1, 100, m1, 0.1);
   slider1.position(20, 20);
@@ -231,6 +239,8 @@ function draw() {
   stroke(50, 100, 200);
   fill(80, 140, 220);
   circle(pendulum.bottom.x2, pendulum.bottom.y2, 30);
+
+  if (!isRunning) return;
 
   for (let step=0; step<STEPS_PER_FRAME; ++step){
     pendulum.update();
