@@ -1,4 +1,4 @@
-let slider1, slider2, slider3, slider4;
+let slider1, slider2, slider3, slider4, slider5, slider6, slider7, slider8;
 const dt = 0.001; // krok całkowania
 const STEPS_PER_FRAME = 100; // liczba kroków całkowania na klatkę
 let isRunning = false
@@ -8,6 +8,10 @@ let m1 = 10;
 let m2 = 50;
 let l1 = 200;
 let l2 = 200;
+let m1_2 = 10;
+let m2_2 = 50;
+let l1_2 = 200;
+let l2_2 = 200;
 
 let theta1 = 0;
 let theta2 = 0;
@@ -122,8 +126,8 @@ class DoublePendulum {
 
     this.bottom.theta += (k21_theta + 2 * k22_theta + 2 * k23_theta + k24_theta) / 6
     this.bottom.omega += (k21_omega + 2 * k22_omega + 2 * k23_omega + k24_omega) / 6
- 
-    
+
+
     this.top.x2 = this.top.x1 + this.top.length * Math.sin(this.top.theta)
     this.top.y2 = this.top.y1 + this.top.length * Math.cos(this.top.theta)
 
@@ -144,24 +148,32 @@ class DoublePendulum {
 
 class Pendulum {
 constructor(x1, y1, theta, omega, mass, length) {
-  this.x1 = x1; 
+  this.x1 = x1;
   this.x2 = x1 + length * Math.sin(theta)
   this.y1 = y1
   this.y2 = y1 + length * Math.cos(theta)
   this.theta = theta
   this.omega = omega;
   this.m = mass;
-  this.length = length;  
-} 
-} 
-  
+  this.length = length;
+}
+}
 
-let pendulum1 = new Pendulum(400, 100, 5*Math.PI/4, 0, m1, l1)
-let pendulum2 = new Pendulum(pendulum1.x2, pendulum1.y2, -Math.PI/4, 0, m2, l2)
 
-let pendulum = new DoublePendulum(
-    pendulum1,
-    pendulum2
+let pendulumTop1 = new Pendulum(600, 100, 5*Math.PI/4, 0, m1, l1)
+let pendulumBottom1 = new Pendulum(pendulumTop1.x2, pendulumTop1.y2, -Math.PI/4, 0, m2, l2)
+
+let pendulum1 = new DoublePendulum(
+    pendulumTop1,
+    pendulumBottom1
+)
+
+let pendulumTop2 = new Pendulum(600, 100, 5*Math.PI/4, 0, m1_2, l1_2)
+let pendulumBottom2 = new Pendulum(pendulumTop2.x2, pendulumTop2.y2, -Math.PI/4, 0, m2_2, l2_2)
+
+let pendulum2 = new DoublePendulum(
+    pendulumTop2,
+    pendulumBottom2
 )
 
 function changeRunning() {
@@ -169,9 +181,9 @@ function changeRunning() {
 }
 
 function setup() {
-  createCanvas(800, 700);
+  createCanvas(1200, 700);
   button = createButton('Pause/Resume');
-  button.position(20, 140);
+  button.position(20, 300);
   button.mousePressed(changeRunning);
 
   slider1 = createSlider(1, 100, m1, 0.1);
@@ -189,6 +201,22 @@ function setup() {
   slider4 = createSlider(50, 300, l2, 1);
   slider4.position(20, 110)
   slider4.size(150);
+
+  slider5 = createSlider(1, 100, m1_2, 0.1);
+  slider5.position(20, 160);
+  slider5.size(150);
+
+  slider6 = createSlider(1, 100, m2_2, 0.1);
+  slider6.position(20, 190);
+  slider6.size(150);
+
+  slider7 = createSlider(50, 300, l1_2, 1);
+  slider7.position(20, 220);
+  slider7.size(150);
+
+  slider8 = createSlider(50, 300, l2_2, 1);
+  slider8.position(20, 250)
+  slider8.size(150);
 }
 
 function draw() {
@@ -199,10 +227,20 @@ function draw() {
   l1 = slider3.value();
   l2 = slider4.value();
 
-  pendulum.top.m = m1;
-  pendulum.bottom.m = m2;
-  pendulum.top.length = l1;
-  pendulum.bottom.length = l2;
+  pendulum1.top.m = m1;
+  pendulum1.bottom.m = m2;
+  pendulum1.top.length = l1;
+  pendulum1.bottom.length = l2;
+
+  m1_2 = slider5.value();
+  m2_2 = slider6.value();
+  l1_2 = slider7.value();
+  l2_2 = slider8.value();
+
+  pendulum2.top.m = m1_2;
+  pendulum2.bottom.m = m2_2;
+  pendulum2.top.length = l1_2;
+  pendulum2.bottom.length = l2_2;
 
 
   textSize(14);
@@ -211,44 +249,90 @@ function draw() {
   stroke(220, 80, 80);
   strokeWeight(1);
   fill(220, 80, 80);
-  text('m1: ' + m1.toFixed(1) + ' kg', 185, 30);
+  text('m1_1: ' + m1.toFixed(1) + ' kg', 185, 30);
 
   stroke(80, 140, 220);
   fill(80, 140, 220);
-  text('m2: ' + m2.toFixed(1) + ' kg', 185, 60);
+  text('m2_1: ' + m2.toFixed(1) + ' kg', 185, 60);
 
   stroke(50);
   fill(50);
-  text('L1: ' + l1.toFixed(0), 185, 90);
-  text('L2: ' + l2.toFixed(0), 185, 120);
+  text('L1_1: ' + l1.toFixed(0), 185, 90);
+  text('L2_1: ' + l2.toFixed(0), 185, 120);
+
+  stroke(80, 200, 80);
+  strokeWeight(1);
+  fill(80, 200, 80);
+  text('m1_2: ' + m1_2.toFixed(1) + ' kg', 185, 170);
+
+  stroke(200, 180, 80);
+  fill(200, 180, 80);
+  text('m2_2: ' + m2_2.toFixed(1) + ' kg', 185, 200);
+
+  stroke(50);
+  fill(50);
+  text('L1_2: ' + l1_2.toFixed(0), 185, 230);
+  text('L2_2: ' + l2_2.toFixed(0), 185, 260);
 
   fill(80);
   noStroke();
-  circle(pendulum.top.x1, pendulum.top.y1, 12);
+  circle(pendulum1.top.x1, pendulum1.top.y1, 12);
 
   stroke(60);
   strokeWeight(3);
-  line(pendulum.top.x1, pendulum.top.y1, pendulum.top.x2, pendulum.top.y2);
-  line(pendulum.bottom.x1, pendulum.bottom.y1, pendulum.bottom.x2, pendulum.bottom.y2);
+  line(pendulum1.top.x1, pendulum1.top.y1, pendulum1.top.x2, pendulum1.top.y2);
+  line(pendulum1.bottom.x1, pendulum1.bottom.y1, pendulum1.bottom.x2, pendulum1.bottom.y2);
 
   strokeWeight(2);
   stroke(180, 50, 50);
   fill(220, 80, 80);
-  circle(pendulum.top.x2, pendulum.top.y2, 30);
+  circle(pendulum1.top.x2, pendulum1.top.y2, 30);
 
   stroke(50, 100, 200);
   fill(80, 140, 220);
-  circle(pendulum.bottom.x2, pendulum.bottom.y2, 30);
+  circle(pendulum1.bottom.x2, pendulum1.bottom.y2, 30);
+
+  fill(80);
+  noStroke();
+  circle(pendulum2.top.x1, pendulum2.top.y1, 12);
+
+  stroke(60);
+  strokeWeight(3);
+  line(pendulum2.top.x1, pendulum2.top.y1, pendulum2.top.x2, pendulum2.top.y2);
+  line(pendulum2.bottom.x1, pendulum2.bottom.y1, pendulum2.bottom.x2, pendulum2.bottom.y2);
+
+  strokeWeight(2);
+  stroke(50, 180, 50);
+  fill(80, 200, 80);
+  circle(pendulum2.top.x2, pendulum2.top.y2, 30);
+
+  stroke(180, 160, 50);
+  fill(200, 180, 80);
+  circle(pendulum2.bottom.x2, pendulum2.bottom.y2, 30);
 
   if (!isRunning) return;
 
   for (let step=0; step<STEPS_PER_FRAME; ++step){
-    pendulum.update();
+    pendulum1.update();
+    pendulum2.update();
 
-    if (!isFinite(pendulum.top.theta) || !isFinite(pendulum.bottom.theta) ||
-        !isFinite(pendulum.top.omega) || !isFinite(pendulum.bottom.omega) ||
-        Math.abs(pendulum.top.omega) > 1000 || Math.abs(pendulum.bottom.omega) > 1000) {
-          
+    if (!isFinite(pendulum1.top.theta) || !isFinite(pendulum1.bottom.theta) ||
+        !isFinite(pendulum1.top.omega) || !isFinite(pendulum1.bottom.omega) ||
+        Math.abs(pendulum1.top.omega) > 1000 || Math.abs(pendulum1.bottom.omega) > 1000) {
+
+      noStroke();
+      fill(220, 50, 50);
+      textSize(20);
+      textAlign(CENTER);
+      text('SIMULATION UNSTABLE!', width/2, height/2);
+      textAlign(LEFT);
+      break;
+    }
+
+    if (!isFinite(pendulum2.top.theta) || !isFinite(pendulum2.bottom.theta) ||
+        !isFinite(pendulum2.top.omega) || !isFinite(pendulum2.bottom.omega) ||
+        Math.abs(pendulum2.top.omega) > 1000 || Math.abs(pendulum2.bottom.omega) > 1000) {
+
       noStroke();
       fill(220, 50, 50);
       textSize(20);
